@@ -36,22 +36,41 @@ export async function callAI(
   const isThinking = useThinking && !!provider.thinkingModel;
 
   const body: Record<string, unknown> = { model, messages };
-  if (!isThinking) {
+  if (isThinking && provider.thinkingParams) {
+    Object.assign(body, provider.thinkingParams);
+  } else {
     body.temperature = temperature;
   }
 
   const url = `${baseUrl}/chat/completions`;
 
-  console.log(`[AI] calling ${providerId} model=${model} thinking=${isThinking}`);
+  const timeoutMs = isThinking ? 120_000 : 60_000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(body),
-  });
+  console.log(`[AI] calling ${providerId} model=${model} thinking=${isThinking} timeout=${timeoutMs}ms`);
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timer);
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      console.error(`[AI] request timed out after ${timeoutMs}ms`);
+      throw new Error(`AI 请求超时（${timeoutMs / 1000}秒），thinking 模型可能需要更长时间`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
 
   if (!res.ok) {
     const text = await res.text();

@@ -4,6 +4,7 @@ export interface AIProvider {
   baseUrl: string;
   model: string;
   thinkingModel: string | null;
+  thinkingParams?: Record<string, unknown>;
   keyPlaceholder: string;
 }
 
@@ -14,6 +15,7 @@ export const AI_PROVIDERS: AIProvider[] = [
     baseUrl: 'https://api.deepseek.com',
     model: 'deepseek-chat',
     thinkingModel: 'deepseek-reasoner',
+    thinkingParams: { max_tokens: 2048 },
     keyPlaceholder: 'sk-...',
   },
   {
@@ -22,6 +24,7 @@ export const AI_PROVIDERS: AIProvider[] = [
     baseUrl: 'https://api.openai.com/v1',
     model: 'gpt-4o',
     thinkingModel: 'o3-mini',
+    thinkingParams: { reasoning_effort: 'low', max_completion_tokens: 4096 },
     keyPlaceholder: 'sk-...',
   },
   {
@@ -46,6 +49,7 @@ export const AI_PROVIDERS: AIProvider[] = [
     baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
     model: 'qwen-plus',
     thinkingModel: 'qwq-32b',
+    thinkingParams: { max_tokens: 4096 },
     keyPlaceholder: 'sk-...',
   },
   {
@@ -62,6 +66,7 @@ export const AI_PROVIDERS: AIProvider[] = [
     baseUrl: 'https://ark.cn-beijing.volces.com/api/v3',
     model: 'doubao-1.5-pro-32k-250115',
     thinkingModel: 'doubao-1.5-thinking-pro-250415',
+    thinkingParams: { max_tokens: 4096 },
     keyPlaceholder: '...',
   },
   {

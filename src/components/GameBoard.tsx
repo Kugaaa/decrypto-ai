@@ -143,15 +143,15 @@ export default function GameBoard() {
   }, [phase, aiCtx, aiTeam.keywords, currentAIClues, history, submitAIGuess]);
 
   useEffect(() => {
-    if (phase === 'aiIntercept') runAIIntercept();
+    if (phase === 'aiIntercept') void runAIIntercept().catch(console.error);
   }, [phase, runAIIntercept]);
 
   useEffect(() => {
-    if (phase === 'aiEncrypt') runAIEncryptAndGuess();
+    if (phase === 'aiEncrypt') void runAIEncryptAndGuess().catch(console.error);
   }, [phase, runAIEncryptAndGuess]);
 
   useEffect(() => {
-    if (phase === 'aiGuess') runAIGuess();
+    if (phase === 'aiGuess') void runAIGuess().catch(console.error);
   }, [phase, runAIGuess]);
 
   const renderPhaseContent = () => {
