@@ -71,16 +71,16 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:py-12 relative">
       <DecorativeShapes />
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="text-center max-w-2xl relative z-10"
+        className="text-center max-w-2xl w-full relative z-10"
       >
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <div className="flex justify-center gap-1 mb-3">
             {titleLetters.map((char, i) => (
               <motion.span
@@ -88,7 +88,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 * i, type: 'spring', stiffness: 120 }}
-                className={`text-6xl font-black ${i < 2 ? 'text-blue-500' : 'text-red-400'}`}
+                className={`text-5xl sm:text-6xl font-black ${i < 2 ? 'text-blue-500' : 'text-red-400'}`}
               >
                 {char}
               </motion.span>
@@ -119,7 +119,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
-          className="card rounded-2xl shadow-lg shadow-slate-200/50 p-8 mb-8 text-left"
+          className="card rounded-2xl shadow-lg shadow-slate-200/50 p-5 sm:p-8 mb-6 sm:mb-8 text-left"
         >
           <h2 className="text-lg font-bold mb-5 text-slate-700 flex items-center gap-2">
             <span className="w-1 h-5 bg-gradient-to-b from-blue-400 to-red-300 rounded-full" />
@@ -186,7 +186,7 @@ export default function HomePage() {
           whileHover={{ scale: 1.04, boxShadow: '0 8px 30px rgba(59,130,246,0.25)' }}
           whileTap={{ scale: 0.97 }}
           onClick={() => setShowModal(true)}
-          className="px-10 py-3.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl text-lg font-semibold shadow-md shadow-blue-200/50 cursor-pointer"
+          className="px-8 sm:px-10 py-3 sm:py-3.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl text-base sm:text-lg font-semibold shadow-md shadow-blue-200/50 cursor-pointer"
         >
           开始游戏
         </motion.button>
@@ -207,13 +207,13 @@ export default function HomePage() {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               onClick={(e) => e.stopPropagation()}
-              className="card rounded-2xl shadow-2xl shadow-slate-300/30 p-8 w-full max-w-md mx-4"
+              className="card rounded-2xl shadow-2xl shadow-slate-300/30 p-5 sm:p-8 w-full max-w-md mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto"
             >
-              <h3 className="text-xl font-bold mb-1 text-slate-700">设置 AI 对手</h3>
-              <p className="text-sm text-slate-400 mb-5">选择 AI 厂商并输入 API Key</p>
+              <h3 className="text-lg sm:text-xl font-bold mb-1 text-slate-700">设置 AI 对手</h3>
+              <p className="text-sm text-slate-400 mb-4 sm:mb-5">选择 AI 厂商并输入 API Key</p>
 
               {/* Provider selector */}
-              <div className="grid grid-cols-4 gap-1.5 mb-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 mb-4">
                 {AI_PROVIDERS.map((p) => (
                   <button
                     key={p.id}

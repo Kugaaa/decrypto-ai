@@ -46,7 +46,7 @@ export default function ClueInput() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
               </svg>
             </motion.div>
-            <div className="text-center">
+            <div className="text-center px-4">
               <p className="text-sm font-medium text-slate-600 mb-1">
                 请确认 <RoleBadge role="humanReceiver" /> 已回避屏幕
               </p>
@@ -67,10 +67,10 @@ export default function ClueInput() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card-solid rounded-2xl shadow-sm p-6 min-h-[300px]"
+        className="card-solid rounded-2xl shadow-sm p-4 sm:p-6 min-h-[280px] sm:min-h-[300px]"
       >
-        <div className="mb-5">
-          <h3 className="text-base font-bold text-slate-700 mb-2 flex items-center gap-2">
+        <div className="mb-4 sm:mb-5">
+          <h3 className="text-sm sm:text-base font-bold text-slate-700 mb-2 flex items-center gap-2">
             <RoleBadge role="humanEncryptor" />
             <span>— 给出线索</span>
           </h3>
@@ -87,10 +87,11 @@ export default function ClueInput() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: revealed ? 0.1 * i : 0 }}
-              className="flex items-center gap-3"
+              className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3"
             >
-              <div className="flex-shrink-0 w-[7.5rem]">
-                <span className="inline-flex items-center justify-center w-full text-xs bg-blue-50 text-blue-600 px-2.5 py-1.5 rounded-lg border border-blue-100/60 font-medium truncate">
+              <div className="flex-shrink-0 sm:w-[7.5rem]">
+                <span className="inline-flex items-center text-xs bg-blue-50 text-blue-600 px-2.5 py-1.5 rounded-lg border border-blue-100/60 font-medium">
+                  <span className="w-4 h-4 rounded bg-blue-100 flex items-center justify-center text-xs font-bold mr-1.5 flex-shrink-0">{currentHumanCode[i]}</span>
                   {targetKeywords[i]}
                 </span>
               </div>
@@ -106,7 +107,7 @@ export default function ClueInput() {
                     setError('');
                   }}
                   onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white focus:border-blue-200 transition-all"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white focus:border-blue-200 transition-all"
                 />
               </div>
             </motion.div>
@@ -119,7 +120,7 @@ export default function ClueInput() {
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           onClick={handleSubmit}
-          className="mt-5 w-full py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-semibold shadow-sm shadow-blue-200/50 cursor-pointer"
+          className="mt-4 sm:mt-5 w-full py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-semibold shadow-sm shadow-blue-200/50 cursor-pointer"
         >
           提交线索
         </motion.button>

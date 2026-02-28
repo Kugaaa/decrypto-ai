@@ -20,7 +20,7 @@ function LoadingSpinner({ text, color = 'red' }: { text: string; color?: 'red' |
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="card-solid rounded-2xl shadow-sm p-8 flex flex-col items-center gap-4"
+      className="card-solid rounded-2xl shadow-sm p-5 sm:p-8 flex flex-col items-center gap-4"
     >
       <div className="relative">
         <div className={`w-10 h-10 border-[3px] ${ringColor} rounded-full animate-spin`} />
@@ -256,7 +256,7 @@ export default function GameBoard() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="card-solid rounded-2xl shadow-sm p-8 text-center"
+            className="card-solid rounded-2xl shadow-sm p-5 sm:p-8 text-center"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -269,10 +269,10 @@ export default function GameBoard() {
             <h3 className="text-xl font-bold text-slate-700 mb-1">
               第 {round} 轮结束
             </h3>
-            <p className="text-sm text-slate-400 mb-6">
-              玩家队：拦截 {humanTeam.interceptCount} · 失误 {humanTeam.miscommunicationCount}
-              {'　|　'}
-              AI 队：拦截 {aiTeam.interceptCount} · 失误 {aiTeam.miscommunicationCount}
+            <p className="text-xs sm:text-sm text-slate-400 mb-5 sm:mb-6">
+              <span className="block sm:inline">玩家队：拦截 {humanTeam.interceptCount} · 失误 {humanTeam.miscommunicationCount}</span>
+              <span className="hidden sm:inline">{'　|　'}</span>
+              <span className="block sm:inline">AI 队：拦截 {aiTeam.interceptCount} · 失误 {aiTeam.miscommunicationCount}</span>
             </p>
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -295,18 +295,21 @@ export default function GameBoard() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="flex-1 max-w-7xl w-full mx-auto px-4 py-5 flex gap-5">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-4 py-3 sm:py-5 flex gap-5">
         <aside className="w-64 flex-shrink-0 hidden lg:block">
           <RoundHistory />
         </aside>
-        <main className="flex-1 space-y-4">
+        <main className="flex-1 space-y-3 sm:space-y-4">
           <ScoreBoard />
           <div className="lg:hidden">
             <button
               onClick={() => setShowMobileHistory(!showMobileHistory)}
-              className="text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer mb-2"
+              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer mb-2 px-1"
             >
-              {showMobileHistory ? '隐藏历史记录' : '查看历史记录'}
+              <svg className={`w-3.5 h-3.5 transition-transform ${showMobileHistory ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+              {showMobileHistory ? '收起历史记录' : '展开历史记录'}
             </button>
             <AnimatePresence>
               {showMobileHistory && (
@@ -314,7 +317,7 @@ export default function GameBoard() {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden mb-4"
+                  className="overflow-hidden mb-3"
                 >
                   <RoundHistory />
                 </motion.div>
@@ -345,18 +348,18 @@ function PhaseIndicator({
   const textColor = color === 'blue' ? 'text-blue-600' : 'text-red-500';
 
   return (
-    <div className="mb-4 flex items-center gap-3">
+    <div className="mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
       <div className="flex gap-0.5">
         {Array.from({ length: total }, (_, i) => (
           <motion.div
             key={i}
             initial={false}
             animate={i < step ? { scaleX: 1 } : { scaleX: 1 }}
-            className={`h-1.5 w-6 rounded-full ${i < step ? bg : bgLight} transition-colors duration-300`}
+            className={`h-1.5 w-4 sm:w-6 rounded-full ${i < step ? bg : bgLight} transition-colors duration-300`}
           />
         ))}
       </div>
-      <span className={`text-sm font-bold ${textColor}`}>{label}</span>
+      <span className={`text-xs sm:text-sm font-bold ${textColor}`}>{label}</span>
     </div>
   );
 }

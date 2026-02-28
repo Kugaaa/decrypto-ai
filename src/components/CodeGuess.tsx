@@ -37,7 +37,7 @@ function NumberPicker({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className={`w-14 h-14 rounded-xl border-2 text-lg font-black flex items-center justify-center cursor-pointer transition-all ${
+        className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl border-2 text-base sm:text-lg font-black flex items-center justify-center cursor-pointer transition-all ${
           value
             ? `${accent} border-transparent shadow-sm`
             : 'bg-slate-50 border-dashed border-slate-300 text-slate-300 hover:border-slate-400'
@@ -61,7 +61,7 @@ function NumberPicker({
                   key={n}
                   disabled={isDisabled}
                   onClick={() => { onChange(n); setOpen(false); }}
-                  className={`w-10 h-10 rounded-lg text-sm font-bold flex items-center justify-center transition-all cursor-pointer ${
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-sm font-bold flex items-center justify-center transition-all cursor-pointer ${
                     isDisabled
                       ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
                       : n === value
@@ -120,48 +120,50 @@ export default function CodeGuess({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="card-solid rounded-2xl shadow-sm p-6"
+      className="card-solid rounded-2xl shadow-sm p-4 sm:p-6"
     >
-      <div className="mb-5">
-        <h3 className="text-base font-bold text-slate-700 mb-1 flex items-center gap-2">{title}</h3>
+      <div className="mb-4 sm:mb-5">
+        <h3 className="text-sm sm:text-base font-bold text-slate-700 mb-1 flex items-center gap-2">{title}</h3>
         <p className="text-xs text-slate-400">{subtitle}</p>
       </div>
 
-      <div className="flex gap-2 mb-5">
+      <div className="flex flex-col sm:flex-row gap-2 mb-4 sm:mb-5">
         {clues.map((clue, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 * i }}
-            className={`flex-1 ${colorAccent} rounded-xl px-3 py-3 text-center border border-white/50`}
+            className={`flex-1 ${colorAccent} rounded-xl px-3 py-2.5 sm:py-3 border border-white/50 flex sm:flex-col sm:text-center items-center sm:items-stretch gap-2 sm:gap-0`}
           >
-            <p className="text-xs text-slate-400 mb-1">线索 {i + 1}</p>
+            <p className="text-xs text-slate-400 sm:mb-1 flex-shrink-0">线索 {i + 1}</p>
             <p className="text-sm font-bold text-slate-700">{clue}</p>
           </motion.div>
         ))}
       </div>
 
-      <div className="flex items-center gap-4 mb-4">
-        <p className="text-xs text-slate-400 flex-shrink-0">密码</p>
-        <div className="flex items-center gap-3">
-          {picks.map((val, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <NumberPicker
-                value={val}
-                onChange={(n) => handlePick(idx, n)}
-                disabled={usedNumbers.filter((_, i) => i !== usedNumbers.indexOf(val!))}
-                accent={colorAccent.includes('red') ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}
-              />
-              {idx < 2 && <span className="text-slate-300 font-bold">-</span>}
-            </div>
-          ))}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <p className="text-xs text-slate-400 flex-shrink-0">密码</p>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {picks.map((val, idx) => (
+              <div key={idx} className="flex items-center gap-1.5 sm:gap-2">
+                <NumberPicker
+                  value={val}
+                  onChange={(n) => handlePick(idx, n)}
+                  disabled={usedNumbers.filter((_, i) => i !== usedNumbers.indexOf(val!))}
+                  accent={colorAccent.includes('red') ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}
+                />
+                {idx < 2 && <span className="text-slate-300 font-bold">-</span>}
+              </div>
+            ))}
+          </div>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleSubmit}
-          className={`ml-auto px-6 py-2.5 ${buttonColor} text-white rounded-xl text-sm font-semibold shadow-sm cursor-pointer`}
+          className={`w-full sm:w-auto sm:ml-auto px-6 py-2.5 ${buttonColor} text-white rounded-xl text-sm font-semibold shadow-sm cursor-pointer`}
         >
           确认
         </motion.button>

@@ -70,7 +70,7 @@ function RoundDetailModal({
         exit={{ scale: 0.95, opacity: 0, y: 10 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         onClick={(e) => e.stopPropagation()}
-        className="card rounded-2xl shadow-2xl shadow-slate-300/30 p-6 w-full max-w-2xl mx-4 max-h-[80vh] overflow-y-auto"
+        className="card rounded-2xl shadow-2xl shadow-slate-300/30 p-4 sm:p-6 w-full max-w-2xl mx-3 sm:mx-4 max-h-[85vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -88,12 +88,12 @@ function RoundDetailModal({
         </div>
 
         <div className="space-y-4">
-          <div className="bg-blue-50/60 rounded-xl p-4 space-y-3 border border-blue-100/50">
+          <div className="bg-blue-50/60 rounded-xl p-3 sm:p-4 space-y-3 border border-blue-100/50">
             <h4 className="text-sm font-bold text-blue-600 flex items-center gap-1.5">
               <span className="w-1.5 h-4 bg-blue-400 rounded-full" />
               玩家队
             </h4>
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs">
               <div>
                 <p className="text-slate-400 mb-0.5">密码</p>
                 <p className="font-bold text-slate-700 text-sm">{formatCode(round.humanPhase.code)}</p>
@@ -127,12 +127,12 @@ function RoundDetailModal({
             </div>
           </div>
 
-          <div className="bg-red-50/60 rounded-xl p-4 space-y-3 border border-red-100/50">
+          <div className="bg-red-50/60 rounded-xl p-3 sm:p-4 space-y-3 border border-red-100/50">
             <h4 className="text-sm font-bold text-red-500 flex items-center gap-1.5">
               <span className="w-1.5 h-4 bg-red-400 rounded-full" />
               AI 队
             </h4>
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs">
               <div>
                 <p className="text-slate-400 mb-0.5">密码</p>
                 <p className="font-bold text-slate-700 text-sm">{formatCode(round.aiPhase.code)}</p>

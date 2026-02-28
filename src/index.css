@@ -18,12 +18,17 @@ body {
     "WenQuanYi Micro Hei", sans-serif;
   color: #1e293b;
   min-height: 100vh;
+  min-height: 100dvh;
   background: linear-gradient(135deg, #f0f4ff 0%, #faf5f5 50%, #f0f9ff 100%);
   background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 @keyframes float {

@@ -22,7 +22,7 @@ export default function GameOverModal() {
         initial={{ scale: 0.8, opacity: 0, y: 30 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className="card rounded-2xl shadow-2xl shadow-slate-300/30 p-8 w-full max-w-md mx-4 text-center"
+        className="card rounded-2xl shadow-2xl shadow-slate-300/30 p-5 sm:p-8 w-full max-w-md mx-3 sm:mx-4 text-center"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -49,7 +49,7 @@ export default function GameOverModal() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className={`text-3xl font-black mb-6 ${c.color}`}
+          className={`text-2xl sm:text-3xl font-black mb-5 sm:mb-6 ${c.color}`}
         >
           {c.title}
         </motion.h2>
