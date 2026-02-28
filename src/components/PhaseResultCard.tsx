@@ -6,7 +6,6 @@ interface PhaseResultCardProps {
   teamLabel: string;
   colorClass: string;
   code: Code;
-  clues: [string, string, string];
   teamGuess: Code | null;
   teamGuessCorrect: boolean | null;
   interceptGuess: Code | null;
@@ -20,7 +19,6 @@ export default function PhaseResultCard({
   teamLabel,
   colorClass,
   code,
-  clues,
   teamGuess,
   teamGuessCorrect,
   interceptGuess,
@@ -41,24 +39,9 @@ export default function PhaseResultCard({
       </h3>
 
       <div className={`${colorClass} rounded-xl p-3 sm:p-4 space-y-3 sm:space-y-4 border border-white/50`}>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div>
-              <p className="text-xs text-slate-400 mb-0.5">密码</p>
-              <p className="text-lg sm:text-xl font-black text-slate-700 tracking-wider">{formatCode(code)}</p>
-            </div>
-            <div className="h-8 w-px bg-slate-200/60 hidden sm:block" />
-          </div>
-          <div className="flex-1">
-            <p className="text-xs text-slate-400 mb-1">线索</p>
-            <div className="flex flex-wrap gap-1.5">
-              {clues.map((c, i) => (
-                <span key={i} className="bg-white/70 px-2 py-0.5 rounded-md text-xs font-medium text-slate-700 border border-white/50">
-                  {c}
-                </span>
-              ))}
-            </div>
-          </div>
+        <div>
+          <p className="text-xs text-slate-400 mb-0.5">密码</p>
+          <p className="text-lg sm:text-xl font-black text-slate-700 tracking-wider">{formatCode(code)}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:gap-3">

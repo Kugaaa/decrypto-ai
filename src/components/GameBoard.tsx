@@ -182,7 +182,6 @@ export default function GameBoard() {
                 teamLabel="玩家队"
                 colorClass="bg-blue-50"
                 code={currentHumanCode}
-                clues={currentHumanClues}
                 teamGuess={currentHumanGuess}
                 teamGuessCorrect={
                   currentHumanGuess ? checkGuess(currentHumanGuess, currentHumanCode) : null
@@ -234,7 +233,6 @@ export default function GameBoard() {
                 teamLabel="AI 队"
                 colorClass="bg-red-50"
                 code={currentAICode}
-                clues={currentAIClues}
                 teamGuess={currentAITeamGuess}
                 teamGuessCorrect={
                   currentAITeamGuess ? checkGuess(currentAITeamGuess, currentAICode) : null
