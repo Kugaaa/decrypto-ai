@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import Header from './Header';
@@ -73,16 +73,23 @@ export default function GameBoard() {
     setAIThinking,
   } = store;
 
-  const aiCtx: AICallContext = { providerId, apiKey, useThinking, customBaseUrl, customModel };
+  const aiCtx = useMemo<AICallContext>(
+    () => ({ providerId, apiKey, useThinking, customBaseUrl, customModel }),
+    [providerId, apiKey, useThinking, customBaseUrl, customModel],
+  );
+
+  const aiProcessingRef = useRef(false);
 
   const runAIIntercept = useCallback(async () => {
+    if (aiProcessingRef.current) return;
     if (phase !== 'aiIntercept' || !currentHumanClues) return;
+    aiProcessingRef.current = true;
     setAIThinking(true);
     try {
       const result = await aiIntercept(aiCtx, currentHumanClues, history, 'ai');
       submitAIIntercept(result.guess, result.log);
     } catch (err) {
-      console.error('AI intercept failed:', err);
+      console.error('[GameBoard] AI intercept failed:', err);
       submitAIIntercept([1, 2, 3], {
         role: 'interceptor',
         input: '',
@@ -91,38 +98,47 @@ export default function GameBoard() {
       });
     } finally {
       setAIThinking(false);
+      aiProcessingRef.current = false;
     }
   }, [phase, aiCtx, currentHumanClues, history, submitAIIntercept, setAIThinking]);
 
   const runAIEncryptAndGuess = useCallback(async () => {
+    if (aiProcessingRef.current) return;
     if (phase !== 'aiEncrypt' || !currentAICode) return;
+    aiProcessingRef.current = true;
     try {
       const encResult = await aiEncrypt(aiCtx, aiTeam.keywords, currentAICode, history);
       submitAIClues(encResult.clues, encResult.log);
     } catch (err) {
-      console.error('AI encrypt failed:', err);
+      console.error('[GameBoard] AI encrypt failed:', err);
       submitAIClues(['线索1', '线索2', '线索3'], {
         role: 'encryptor',
         input: '',
         output: `错误: ${err instanceof Error ? err.message : String(err)}`,
         timestamp: Date.now(),
       });
+    } finally {
+      aiProcessingRef.current = false;
     }
   }, [phase, aiCtx, aiTeam.keywords, currentAICode, history, submitAIClues]);
 
   const runAIGuess = useCallback(async () => {
+    if (aiProcessingRef.current) return;
     if (phase !== 'aiGuess' || !currentAIClues) return;
+    aiProcessingRef.current = true;
     try {
       const guessResult = await aiGuess(aiCtx, aiTeam.keywords, currentAIClues, history);
       submitAIGuess(guessResult.guess, guessResult.log);
     } catch (err) {
-      console.error('AI guess failed:', err);
+      console.error('[GameBoard] AI guess failed:', err);
       submitAIGuess([1, 2, 3], {
         role: 'guesser',
         input: '',
         output: `错误: ${err instanceof Error ? err.message : String(err)}`,
         timestamp: Date.now(),
       });
+    } finally {
+      aiProcessingRef.current = false;
     }
   }, [phase, aiCtx, aiTeam.keywords, currentAIClues, history, submitAIGuess]);
 

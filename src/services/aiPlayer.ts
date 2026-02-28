@@ -99,9 +99,11 @@ ${round <= 2 ? `现在是第${round}轮（早期），可以给出与关键词�
   const clues = parseCluesFromResponse(result.content);
 
   if (!clues) {
+    console.error('[aiEncrypt] failed to parse clues from response:', result.content);
     throw new Error('AI 加密者输出格式异常，无法解析线索');
   }
 
+  console.log('[aiEncrypt] clues:', clues);
   return {
     clues,
     log: {
@@ -164,9 +166,11 @@ ${keywordMap}
   const guess = parseCodeFromResponse(result.content);
 
   if (!guess) {
+    console.error('[aiGuess] failed to parse code from response:', result.content);
     throw new Error('AI 接收者输出格式异常，无法解析密码');
   }
 
+  console.log('[aiGuess] guess:', guess);
   return {
     guess,
     log: {
@@ -227,9 +231,11 @@ ${historyTable}
   const guess = parseCodeFromResponse(result.content);
 
   if (!guess) {
+    console.error('[aiIntercept] failed to parse code from response:', result.content);
     throw new Error('AI 拦截者输出格式异常，无法解析密码');
   }
 
+  console.log('[aiIntercept] guess:', guess);
   return {
     guess,
     log: {
