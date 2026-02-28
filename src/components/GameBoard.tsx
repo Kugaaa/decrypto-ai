@@ -9,7 +9,7 @@ import CodeGuess from './CodeGuess';
 import PhaseResultCard from './PhaseResultCard';
 import GameOverModal from './GameOverModal';
 import RoleBadge from './RoleBadge';
-import { aiEncrypt, aiGuess, aiIntercept, type AICallContext } from '../services/aiPlayer';
+import { aiEncrypt, aiGuess, aiIntercept, AIParseError, type AICallContext } from '../services/aiPlayer';
 import { checkGuess } from '../utils/gameLogic';
 
 function LoadingSpinner({ text, color = 'red' }: { text: string; color?: 'red' | 'blue' }) {
@@ -90,12 +90,13 @@ export default function GameBoard() {
       submitAIIntercept(result.guess, result.log);
     } catch (err) {
       console.error('[GameBoard] AI intercept failed:', err);
-      submitAIIntercept([1, 2, 3], {
-        role: 'interceptor',
+      const log = err instanceof AIParseError ? err.log : {
+        role: 'interceptor' as const,
         input: '',
         output: `错误: ${err instanceof Error ? err.message : String(err)}`,
         timestamp: Date.now(),
-      });
+      };
+      submitAIIntercept([1, 2, 3], log);
     } finally {
       setAIThinking(false);
       aiProcessingRef.current = false;
@@ -111,12 +112,13 @@ export default function GameBoard() {
       submitAIClues(encResult.clues, encResult.log);
     } catch (err) {
       console.error('[GameBoard] AI encrypt failed:', err);
-      submitAIClues(['线索1', '线索2', '线索3'], {
-        role: 'encryptor',
+      const log = err instanceof AIParseError ? err.log : {
+        role: 'encryptor' as const,
         input: '',
         output: `错误: ${err instanceof Error ? err.message : String(err)}`,
         timestamp: Date.now(),
-      });
+      };
+      submitAIClues(['线索1', '线索2', '线索3'], log);
     } finally {
       aiProcessingRef.current = false;
     }
@@ -131,12 +133,13 @@ export default function GameBoard() {
       submitAIGuess(guessResult.guess, guessResult.log);
     } catch (err) {
       console.error('[GameBoard] AI guess failed:', err);
-      submitAIGuess([1, 2, 3], {
-        role: 'guesser',
+      const log = err instanceof AIParseError ? err.log : {
+        role: 'guesser' as const,
         input: '',
         output: `错误: ${err instanceof Error ? err.message : String(err)}`,
         timestamp: Date.now(),
-      });
+      };
+      submitAIGuess([1, 2, 3], log);
     } finally {
       aiProcessingRef.current = false;
     }

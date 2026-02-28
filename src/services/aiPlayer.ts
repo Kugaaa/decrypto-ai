@@ -2,6 +2,15 @@ import type { Code, RoundData, AIThinkingLog } from '../types/game';
 import { callAI, type ChatMessage } from './deepseekApi';
 import { buildClueHistoryTable, buildKeywordClueMap, formatCode } from '../utils/gameLogic';
 
+export class AIParseError extends Error {
+  log: AIThinkingLog;
+  constructor(message: string, log: AIThinkingLog) {
+    super(message);
+    this.name = 'AIParseError';
+    this.log = log;
+  }
+}
+
 export interface AICallContext {
   providerId: string;
   apiKey: string;
@@ -28,12 +37,36 @@ function parseCluesFromResponse(text: string): [string, string, string] | null {
 }
 
 function parseCodeFromResponse(text: string): Code | null {
-  const nums = text.match(/[1-4]/g);
-  if (!nums || nums.length < 3) return null;
-  const result = nums.slice(0, 3).map(Number) as unknown as Code;
-  const unique = new Set(result);
-  if (unique.size !== 3) return null;
-  return result;
+  const validate = (nums: number[]): Code | null => {
+    if (nums.length < 3) return null;
+    const triple = nums.slice(0, 3) as unknown as Code;
+    return new Set(triple).size === 3 ? triple : null;
+  };
+
+  // 1) 优先从「答案：X X X」行提取
+  const answerLine = text.match(/答案[：:]\s*([1-4])[\s,、]+([1-4])[\s,、]+([1-4])/);
+  if (answerLine) {
+    const code = validate([+answerLine[1], +answerLine[2], +answerLine[3]]);
+    if (code) return code;
+  }
+
+  // 2) 从最后一行提取数字（答案通常在末尾）
+  const lastLine = text.trim().split('\n').pop() ?? '';
+  const lastNums = lastLine.match(/[1-4]/g);
+  if (lastNums) {
+    const code = validate(lastNums.map(Number));
+    if (code) return code;
+  }
+
+  // 3) fallback: 全文最后 3 个 1-4 数字
+  const allNums = text.match(/[1-4]/g);
+  if (allNums && allNums.length >= 3) {
+    const tail = allNums.slice(-3).map(Number);
+    const code = validate(tail);
+    if (code) return code;
+  }
+
+  return null;
 }
 
 // ─── AI 加密者 ───
@@ -85,10 +118,17 @@ ${round <= 2 ? `现在是第${round}轮（早期），可以给出与关键词�
 - 位置2 → 编号${code[1]}「${keywords[code[1] - 1]}」
 - 位置3 → 编号${code[2]}「${keywords[code[2] - 1]}」
 
-请为这3个位置各给出1条线索。只输出线索，不要解释：
-1. 
-2. 
-3. `;
+请为这3个位置各给出1条线索。
+
+## 输出格式（严格遵守）
+只输出3行线索，每行格式为「编号. 线索词」，不要输出任何解释或其他文字。
+
+示例输出：
+1. 温暖
+2. 奔跑
+3. 星空
+
+请输出：`;
 
   const messages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
@@ -100,7 +140,13 @@ ${round <= 2 ? `现在是第${round}轮（早期），可以给出与关键词�
 
   if (!clues) {
     console.error('[aiEncrypt] failed to parse clues from response:', result.content);
-    throw new Error('AI 加密者输出格式异常，无法解析线索');
+    throw new AIParseError('AI 加密者输出格式异常，无法解析线索', {
+      role: 'encryptor',
+      input: userPrompt,
+      output: result.content,
+      reasoning: result.reasoning,
+      timestamp: Date.now(),
+    });
   }
 
   console.log('[aiEncrypt] clues:', clues);
@@ -141,21 +187,23 @@ ${keywordMap}
 加密者根据一个你不知道的3位密码给出了3条线索（按密码顺序排列）。你需要判断每条线索分别在暗示哪个关键词，从而还原密码。
 
 ## 解题方法
-对每条线索：
-1. 逐一考虑它与4个关键词的关联度
-2. 参考历史线索模式——同一关键词的线索通常有主题相似性
-3. 选出关联度最高的那个关键词编号
+对每条线索，逐一考虑它与4个关键词的关联度，参考历史线索模式，选出关联度最高的关键词编号。
+注意：密码由3个不重复的1-4数字组成。如果出现冲突，重新权衡各线索的最可能匹配。
 
-注意：密码由3个不重复的1-4数字组成，因此3条线索必须对应3个不同的关键词。如果出现冲突，重新权衡各线索的最可能匹配。`;
+## 输出格式（严格遵守）
+只输出一行答案，不要输出任何分析过程、解释或其他文字。
+格式：答案：X X X （X为1-4的数字，用空格分隔，三个数字互不相同）
+
+示例输出：
+答案：3 1 4`;
 
   const userPrompt = `本轮加密者给出的3条线索（按密码位置顺序）：
 线索1: ${clues[0]}
 线索2: ${clues[1]}
 线索3: ${clues[2]}
 
-请判断每条线索对应的关键词编号，即可还原密码。
-严格按以下格式输出最终答案（只需要最后一行）：
-答案：X X X`;
+请直接输出答案，不要分析：
+答案：`;
 
   const messages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
@@ -167,7 +215,13 @@ ${keywordMap}
 
   if (!guess) {
     console.error('[aiGuess] failed to parse code from response:', result.content);
-    throw new Error('AI 接收者输出格式异常，无法解析密码');
+    throw new AIParseError('AI 接收者输出格式异常，无法解析密码', {
+      role: 'guesser',
+      input: userPrompt,
+      output: result.content,
+      reasoning: result.reasoning,
+      timestamp: Date.now(),
+    });
   }
 
   console.log('[aiGuess] guess:', guess);
@@ -202,25 +256,24 @@ export async function aiIntercept(
 ${historyTable}
 
 ## 分析方法
-第一步——归纳关键词主题：
-- 观察历史记录中每个编号位置收到过的所有线索
-- 找出同一编号下线索的共同特征，推断该编号的关键词主题
-- 例如：如果编号2的线索历史出现过"海浪""沙滩""蓝色"，关键词可能是"海洋"
+第一步——归纳关键词主题：观察每个编号位置历史上收到的所有线索，找出共同特征推断关键词。
+第二步——匹配本轮线索：将本轮每条线索与推断的4个关键词主题匹配，选出关联度最高的编号。
+注意：密码由3个不重复的1-4数字组成。
 
-第二步——匹配本轮线索：
-- 将本轮每条线索与你推断的4个关键词主题进行匹配
-- 选出关联度最高的编号
+## 输出格式（严格遵守）
+只输出一行答案，不要输出任何分析过程、解释或其他文字。
+格式：答案：X X X （X为1-4的数字，用空格分隔，三个数字互不相同）
 
-注意：密码由3个不重复的1-4数字组成。`;
+示例输出：
+答案：2 4 1`;
 
   const userPrompt = `对手本轮3条线索（按密码位置顺序）：
 线索1: ${opponentClues[0]}
 线索2: ${opponentClues[1]}
 线索3: ${opponentClues[2]}
 
-请先简要分析你推断的对手4个关键词主题，然后匹配本轮线索。
-严格按以下格式输出最终答案（只需要最后一行）：
-答案：X X X`;
+请直接输出答案，不要分析：
+答案：`;
 
   const messages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
@@ -232,7 +285,13 @@ ${historyTable}
 
   if (!guess) {
     console.error('[aiIntercept] failed to parse code from response:', result.content);
-    throw new Error('AI 拦截者输出格式异常，无法解析密码');
+    throw new AIParseError('AI 拦截者输出格式异常，无法解析密码', {
+      role: 'interceptor',
+      input: userPrompt,
+      output: result.content,
+      reasoning: result.reasoning,
+      timestamp: Date.now(),
+    });
   }
 
   console.log('[aiIntercept] guess:', guess);
